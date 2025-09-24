@@ -1,0 +1,89 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs/tpm2-tss
+# Visual Studio directories
+.vs/
+ipch/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+Project1/Project1/
+Project1/x64/
+
+# Visual Studio files
+*.vsidx
+*.suo
+*.user
+*.sdf
+*.opensdf
+*.db
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+*.psess
+*.vsp
+*.vspx
+*.sap
+*.aps
+*.ncb
+*.cachefile
+
+# C++ compiled files
+*.obj
+*.pch
+*.gch
+*.ipch
+*.slo
+*.lo
+*.o
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lai
+*.dll
+*.so
+*.dylib
+
+# Fortran module files
+*.mod
+*.smod
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Prerequisites
+*.d
+
+# Visual Studio Code settings
+.vscode/
+
+# CMake build directory
+[Bb]uild/
+
+# Custom ignore for third party libs
+!third_party/**/*.lib
+!third_party/**/*.dll
+
+/Windows Kits
+**/*.log
+
+
+.fake
+
+#Mac fucking trashes
+.DS_Store
+._*

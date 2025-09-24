@@ -10,7 +10,7 @@
 
 #include <stddef.h>           // for size_t
 
-#include "sysapi_util.h"      // for TPM20_Header_In, _TSS2_SYS_CONTEXT_BLOB
+#include "../sysapi_util.h"      // for TPM20_Header_In, _TSS2_SYS_CONTEXT_BLOB
 #include "tss2_sys.h"         // for Tss2_Sys_GetContextSize
 #include "tss2_tpm2_types.h"  // for TPM2_MAX_COMMAND_SIZE
 

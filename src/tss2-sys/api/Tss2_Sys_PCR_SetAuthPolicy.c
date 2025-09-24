@@ -8,7 +8,7 @@
 #include "config.h" // IWYU pragma: keep
 #endif
 
-#include "sysapi_util.h"      // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
+#include "../sysapi_util.h"      // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
 #include "tss2_common.h"      // for TSS2_RC, TSS2_SYS_RC_BAD_REFERENCE, TSS...
 #include "tss2_mu.h"          // for Tss2_MU_UINT16_Marshal, Tss2_MU_UINT32_...
 #include "tss2_sys.h"         // for TSS2_SYS_CONTEXT, TSS2L_SYS_AUTH_COMMAND

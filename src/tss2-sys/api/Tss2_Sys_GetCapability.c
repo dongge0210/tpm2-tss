@@ -10,7 +10,7 @@
 
 #include <string.h>           // for memcpy, size_t
 
-#include "sysapi_util.h"      // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
+#include "../sysapi_util.h"      // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
 #include "tss2_common.h"      // for TSS2_RC, UINT32, TSS2_SYS_RC_BAD_REFERENCE
 #include "tss2_mu.h"          // for Tss2_MU_UINT32_Marshal, Tss2_MU_TPMS_CA...
 #include "tss2_sys.h"         // for TSS2_SYS_CONTEXT, TSS2L_SYS_AUTH_COMMAND

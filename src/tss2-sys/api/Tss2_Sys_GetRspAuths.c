@@ -11,7 +11,7 @@
 
 #include <string.h>            // for memcpy, size_t
 
-#include "sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, TPM20_Header_Out
+#include "../sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, TPM20_Header_Out
 #include "tss2_common.h"       // for UINT16, TSS2_SYS_RC_MALFORMED_RESPONSE
 #include "tss2_mu.h"           // for Tss2_MU_TPMS_AUTH_RESPONSE_Unmarshal
 #include "tss2_sys.h"          // for TSS2L_SYS_AUTH_RESPONSE, TSS2_SYS_CONTEXT

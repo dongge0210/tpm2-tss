@@ -11,7 +11,7 @@
 #include <stddef.h>           // for size_t
 #include <stdint.h>           // for uint8_t
 
-#include "sysapi_util.h"      // for _TSS2_SYS_CONTEXT_BLOB, TPM20_Header_Out
+#include "../sysapi_util.h"      // for _TSS2_SYS_CONTEXT_BLOB, TPM20_Header_Out
 #include "tss2_common.h"      // for TSS2_RC, TSS2_RC_SUCCESS, UINT8, TSS2_S...
 #include "tss2_mu.h"          // for Tss2_MU_UINT32_Unmarshal
 #include "tss2_sys.h"         // for TSS2_SYS_CONTEXT, Tss2_Sys_GetRpBuffer

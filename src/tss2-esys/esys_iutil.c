@@ -9,6 +9,13 @@
 
 #include <inttypes.h>     // for uint8_t, PRIx32, PRIx8, PRIx16
 #include <stdlib.h>       // for calloc
+#if defined(_MSC_VER)
+#include <malloc.h>       // for _alloca on MSVC
+#define ESYS_ALLOCA _alloca
+#else
+#include <alloca.h>       // for alloca on GCC/Clang
+#define ESYS_ALLOCA alloca
+#endif
 
 #include "esys_crypto.h"  // for iesys_crypto_hash_get_digest_size, iesys_cr...
 #include "esys_int.h"     // for RSRC_NODE_T, ESYS_CONTEXT, _ESYS_STATE_INIT
@@ -612,7 +619,7 @@ iesys_encrypt_param(ESYS_CONTEXT * esys_context,
             size_t key_len = TPM2_MAX_SYM_KEY_BYTES + TPM2_MAX_SYM_BLOCK_SIZE;
             if (key_len % hlen > 0)
                 key_len = key_len + hlen - (key_len % hlen);
-            uint8_t symKey[key_len];
+            uint8_t* symKey = (uint8_t*)ESYS_ALLOCA(key_len);
             size_t paramSize = 0;
             const uint8_t *paramBuffer;
 
@@ -623,7 +630,7 @@ iesys_encrypt_param(ESYS_CONTEXT * esys_context,
             if (paramSize == 0)
                 continue;
 
-            BYTE encrypt_buffer[paramSize];
+            BYTE* encrypt_buffer = (BYTE*)ESYS_ALLOCA(paramSize);
             memcpy(&encrypt_buffer[0], paramBuffer, paramSize);
             LOGBLOB_DEBUG(paramBuffer, paramSize, "param to encrypt");
 
@@ -737,12 +744,12 @@ iesys_decrypt_param(ESYS_CONTEXT * esys_context)
     if (key_len % hlen > 0)
         key_len = key_len + hlen - (key_len % hlen);
 
-    uint8_t symKey[key_len];
+    uint8_t* symKey = (uint8_t*)ESYS_ALLOCA(key_len);
 
     r = Tss2_Sys_GetEncryptParam(esys_context->sys, &p2BSize, &ciphertext);
     return_if_error(r, "Getting encrypt param");
 
-    UINT8 plaintext[p2BSize];
+    UINT8* plaintext = (UINT8*)ESYS_ALLOCA(p2BSize);
     memcpy(&plaintext[0], ciphertext, p2BSize);
 
     if (symDef->algorithm == TPM2_ALG_AES) {

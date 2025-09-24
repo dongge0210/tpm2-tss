@@ -45,6 +45,13 @@ static char *strndup(const char* s, size_t n)
 #endif
 #include <string.h>             // for strerror, strcmp, strndup, strcpy
 
+ /* add: portable weak attribute */
+#if defined(_MSC_VER) && !defined(__clang__)
+#define WEAK_ATTR
+#else
+#define WEAK_ATTR __attribute__((weak))
+#endif
+
 #include "tcti-common.h"        // for TCTI_VERSION
 #include "tctildr-interface.h"  // for tctildr_finalize_data, tctildr_get_info
 #include "tctildr.h"
@@ -589,12 +596,13 @@ free_name_conf:
     return rc;
 }
 
-__attribute__((weak))
+WEAK_ATTR
 const TSS2_TCTI_INFO tss2_tcti_info = {
-    .version = TCTI_VERSION,
-    .name = "tctildr",
-    .description = "TCTI module for dynamically loading other TCTI modules",
-    .config_help = "TCTI to load and its configuration. Either"
+    /* 使用位置初始化，避免 MSVC 对 C99 指定初始化的报错 */
+    TCTI_VERSION,
+    "tctildr",
+    "TCTI module for dynamically loading other TCTI modules",
+    "TCTI to load and its configuration. Either"
         " * <child_name>, e.g. device (child_conf will be NULL) OR\n"
         " * <child_name>:<child_conf>, e.g., device:/dev/tpmrm0 OR\n"
         " * NULL, tctildr will attempt to load a child tcti in the following order:\n"
@@ -611,12 +619,12 @@ const TSS2_TCTI_INFO tss2_tcti_info = {
         "   * libtss2-tcti-<child_name>.so\n"
         "   * libtss2-<child_name>.so.0\n"
         "   * libtss2-<child_name>.so\n",
-    .init = Tss2_Tcti_TctiLdr_Init,
+    Tss2_Tcti_TctiLdr_Init,
 };
 
-__attribute__((weak))
+WEAK_ATTR
 const TSS2_TCTI_INFO*
-Tss2_Tcti_Info (void)
+Tss2_Tcti_Info(void)
 {
     return &tss2_tcti_info;
 }

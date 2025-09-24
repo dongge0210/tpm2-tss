@@ -11,7 +11,7 @@
 #include <stddef.h>            // for size_t
 #include <stdint.h>            // for uint8_t
 
-#include "sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
+#include "../sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
 #include "tss2_common.h"       // for TSS2_RC, TSS2_RC_SUCCESS, TSS2_SYS_RC_...
 #include "tss2_sys.h"          // for TSS2_SYS_CONTEXT, Tss2_Sys_GetDecryptP...
 #include "util/tpm2b.h"        // for TPM2B

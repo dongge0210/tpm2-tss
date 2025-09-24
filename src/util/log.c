@@ -24,7 +24,7 @@
 
 #if MAXLOGLEVEL != LOGL_NONE
 
-static const char *log_strings[] = {
+static const char* log_strings[] = {
     "none",
     "(unused)",
     "ERROR",
@@ -33,6 +33,11 @@ static const char *log_strings[] = {
     "debug",
     "trace"
 };
+
+/* 固定消息最大长度，避免 MSVC 的 VLA 报错 */
+#ifndef LOG_MSG_MAX
+#define LOG_MSG_MAX 255
+#endif
 
 /**
  * Compares two strings byte by byte and ignores the
@@ -55,9 +60,9 @@ static const char *log_strings[] = {
  *
  */
 static int
-case_insensitive_strncmp(const char *string1,
-        const char *string2,
-        size_t n)
+case_insensitive_strncmp(const char* string1,
+    const char* string2,
+    size_t n)
 {
     if ((string1 == NULL) && (string2 == NULL)) {
         return 0;
@@ -77,34 +82,36 @@ case_insensitive_strncmp(const char *string1,
 
     int result;
     do {
-        result = tolower((unsigned char) *string1) - tolower((unsigned char) *string2);
+        result = tolower((unsigned char)*string1) - tolower((unsigned char)*string2);
         if (result != 0) {
-                break;
+            break;
         }
-    } while (*string1++ != '\0' && *string2++ != '\0' && --n );
+    } while (*string1++ != '\0' && *string2++ != '\0' && --n);
     return result;
 }
 
 static log_level
-getLogLevel(const char *module, log_level logdefault);
+getLogLevel(const char* module, log_level logdefault);
 
-static FILE *
+static FILE*
 getLogFile(void)
 {
 #ifdef LOG_FILE_ENABLED
-    const char *envpath;
-    static FILE *file = NULL;
+    const char* envpath;
+    static FILE* file = NULL;
 
     if (file) {
         return file;
     }
 
     envpath = getenv("TSS2_LOGFILE");
-    if (envpath == NULL  || !case_insensitive_strncmp(envpath, "stderr", 7)) {
+    if (envpath == NULL || !case_insensitive_strncmp(envpath, "stderr", 7)) {
         file = stderr;
-    } else if (!strcmp(envpath, "-") || !case_insensitive_strncmp(envpath, "stdout", 7)) {
+    }
+    else if (!strcmp(envpath, "-") || !case_insensitive_strncmp(envpath, "stdout", 7)) {
         file = stdout;
-    } else {
+    }
+    else {
         file = fopen(envpath, "a+");
         if (file == NULL) {
             file = stderr;
@@ -120,12 +127,12 @@ getLogFile(void)
 }
 
 void
-doLogBlob(log_level loglevel, const char *module, log_level logdefault,
-           log_level *status,
-           const char *file, const char *func, int line,
-           const uint8_t *blob, size_t size, const char *fmt, ...)
+doLogBlob(log_level loglevel, const char* module, log_level logdefault,
+    log_level* status,
+    const char* file, const char* func, int line,
+    const uint8_t* blob, size_t size, const char* fmt, ...)
 {
-    FILE *logfile;
+    FILE* logfile;
     if (unlikely(*status == LOGLEVEL_UNDEFINED))
         *status = getLogLevel(module, logdefault);
     if (loglevel > *status)
@@ -133,23 +140,19 @@ doLogBlob(log_level loglevel, const char *module, log_level logdefault,
 
     va_list vaargs;
     va_start(vaargs, fmt);
-    /* TODO: Unfortunately, vsnprintf(NULL, 0, ...) do not behave the same as
-       snprintf(NULL, 0, ...). Until there is an alternative, messages on
-       logblob are restricted to 255 characters
-    int msg_len = vsnprintf(NULL, 0, fmt, vaargs); */
-    int msg_len = 255;
-    char msg[msg_len+1];
+    /* 避免 VLA：使用固定上限缓冲区 */
+    char msg[LOG_MSG_MAX + 1];
     vsnprintf(msg, sizeof(msg), fmt, vaargs);
     va_end(vaargs);
 
     if (!blob) {
         doLog(loglevel, module, logdefault, status, file, func, line,
-              "%s (size=%zi): (null)", msg, size);
-	return;
+            "%s (size=%zi): (null)", msg, size);
+        return;
     }
 
     doLog(loglevel, module, logdefault, status, file, func, line,
-          "%s (size=%zi):", msg, size);
+        "%s (size=%zi):", msg, size);
 
     unsigned int i, y, x, off, off2;
     unsigned int width = 16;
@@ -163,7 +166,7 @@ doLogBlob(log_level loglevel, const char *module, log_level logdefault,
         }
 
         /* data output */
-        sprintf(&buffer[off], "%02x", blob[i-1]);
+        sprintf(&buffer[off], "%02x", blob[i - 1]);
         off += 2;
 
         /* ASCII output */
@@ -184,13 +187,14 @@ doLogBlob(log_level loglevel, const char *module, log_level logdefault,
             for (y = 0; y < width - less; y++) {
                 if (isgraph(blob[off2 + y])) {
                     sprintf(&buffer[y + off], "%c", blob[off2 + y]);
-                } else {
+                }
+                else {
                     sprintf(&buffer[y + off], "%c", '.');
                 }
             }
             /* print the line and restart */
             logfile = getLogFile();
-            fprintf (logfile, "%s\n", buffer);
+            fprintf(logfile, "%s\n", buffer);
             fflush(logfile);
             off2 = i;
             off = 0;
@@ -202,39 +206,38 @@ doLogBlob(log_level loglevel, const char *module, log_level logdefault,
 }
 
 void
-doLog(log_level loglevel, const char *module, log_level logdefault,
-           log_level *status,
-           const char *file, const char *func, int line,
-           const char *msg, ...)
+doLog(log_level loglevel, const char* module, log_level logdefault,
+    log_level* status,
+    const char* file, const char* func, int line,
+    const char* msg, ...)
 {
-    FILE *logfile;
+    FILE* logfile;
     if (unlikely(*status == LOGLEVEL_UNDEFINED))
         *status = getLogLevel(module, logdefault);
 
     if (loglevel > *status)
         return;
 
-    int size = snprintf(NULL, 0, "%s:%s:%s:%d:%s() %s \n",
-                log_strings[loglevel], module, file, line, func, msg);
-    char fmt[size+1];
-    snprintf(fmt, sizeof(fmt), "%s:%s:%s:%d:%s() %s \n",
-                log_strings[loglevel], module, file, line, func, msg);
+    /* 避免 VLA：用固定前缀缓冲区 + vfprintf 输出消息体 */
+    char prefix[1024];
+    snprintf(prefix, sizeof(prefix), "%s:%s:%s:%d:%s() ",
+        log_strings[loglevel], module, file, line, func);
 
     va_list vaargs;
     va_start(vaargs, msg);
     logfile = getLogFile();
-    vfprintf (logfile, fmt,
-        /* log_strings[loglevel], module, file, func, line, */
-        vaargs);
+    fputs(prefix, logfile);
+    vfprintf(logfile, msg, vaargs);
+    fputs(" \n", logfile);
     fflush(logfile);
     va_end(vaargs);
 }
 
 static log_level
-log_stringlevel(const char *n)
+log_stringlevel(const char* n)
 {
     log_level i;
-    for(i = 0; i < sizeof(log_strings)/sizeof(log_strings[0]); i++) {
+    for (i = 0; i < sizeof(log_strings) / sizeof(log_strings[0]); i++) {
         if (case_insensitive_strncmp(log_strings[i], n, strlen(log_strings[i])) == 0) {
             return i;
         }
@@ -243,19 +246,19 @@ log_stringlevel(const char *n)
 }
 
 static log_level
-getLogLevel(const char *module, log_level logdefault)
+getLogLevel(const char* module, log_level logdefault)
 {
     log_level loglevel = logdefault;
-    const char *envlevel = getenv("TSS2_LOG");
-    const char *i = envlevel;
+    const char* envlevel = getenv("TSS2_LOG");
+    const char* i = envlevel;
     if (envlevel == NULL)
         return loglevel;
     while ((i = strchr(i, '+')) != NULL) {
         if ((envlevel <= i - strlen("all") &&
-	     case_insensitive_strncmp(i - 3, "all", 3) == 0) ||
+            case_insensitive_strncmp(i - 3, "all", 3) == 0) ||
             (envlevel <= i - strlen(module) &&
-             case_insensitive_strncmp(i - strlen(module), module, strlen(module)) == 0)) {
-            log_level tmp = log_stringlevel(i+1);
+                case_insensitive_strncmp(i - strlen(module), module, strlen(module)) == 0)) {
+            log_level tmp = log_stringlevel(i + 1);
             if (tmp != LOGLEVEL_UNDEFINED)
                 loglevel = tmp;
         }

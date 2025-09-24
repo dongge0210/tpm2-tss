@@ -11,7 +11,7 @@
 #include <inttypes.h>          // for PRIu32, PRIx16, PRIx32, int32_t
 #include <string.h>            // for memcpy, NULL, size_t
 
-#include "sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, TPM20_Header_Out
+#include "../sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, TPM20_Header_Out
 #include "tss2_common.h"       // for TSS2_RC, TSS2_SYS_RC_BAD_REFERENCE
 #include "tss2_mu.h"           // for Tss2_MU_UINT32_Unmarshal, Tss2_MU_TPM2...
 #include "tss2_sys.h"          // for TSS2_SYS_CONTEXT, Tss2_Sys_Execute

@@ -9,7 +9,7 @@
 
 #include <string.h>            // for memcpy
 
-#include "sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
+#include "../sysapi_util.h"       // for _TSS2_SYS_CONTEXT_BLOB, syscontext_cast
 #include "tss2_common.h"       // for TSS2_RC, TSS2_RC_SUCCESS, TSS2_SYS_RC_...
 #include "tss2_sys.h"          // for TSS2_SYS_CONTEXT, Tss2_Sys_GetCommandCode
 #include "tss2_tpm2_types.h"   // for TPM2_CC

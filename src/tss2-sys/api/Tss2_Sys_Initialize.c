@@ -14,7 +14,7 @@
 #include <inttypes.h>     // for PRIu32, PRIx32
 #include <stddef.h>       // for NULL, size_t
 
-#include "sysapi_util.h"  // for _TSS2_SYS_CONTEXT_BLOB, InitSysContextFields
+#include "../sysapi_util.h"  // for _TSS2_SYS_CONTEXT_BLOB, InitSysContextFields
 #include "tss2_common.h"  // for TSS2_ABI_VERSION, TSS2_ABI_VERSION_CURRENT
 #include "tss2_sys.h"     // for TSS2_SYS_CONTEXT, Tss2_Sys_Initialize
 #include "tss2_tcti.h"    // for TSS2_TCTI_CONTEXT, TSS2_TCTI_RECEIVE, TSS2_...
